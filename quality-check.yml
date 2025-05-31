@@ -27,11 +27,12 @@ jobs:
 
     - name: Run full analysis and review
       env:
-        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_REPOSITORY: ${{ github.repository }}
-        PR_NUMBER: ${{ github.event.pull_request.number }}
+        SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
+        OPENAI_API_KEY: "${{ secrets.OPENAI_API_KEY }}"
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GITHUB_REPOSITORY: "${{ github.repository }}"
+        PR_NUMBER: "${{ github.event.pull_request.number }}"
+  
       run: |
         chmod +x run.sh
         ./run.sh
