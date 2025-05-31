@@ -1,7 +1,10 @@
-name: AI Quality Notifier
+name: AI Quality CI
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     paths:
       - '**.py'
       - 'sonar_report.json'
@@ -9,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyze:
+  analyze-and-review:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,12 +24,17 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install dependencies (if needed)
-      run: pip install --upgrade pip
+    - name: Install dependencies
+      run: pip install openai requests
 
-    - name: Run analysis
+    - name: Run full analysis and review
       env:
-        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        SMTP_PASSWORD: "${{ secrets.SMTP_PASSWORD }}"
+        OPENAI_API_KEY: "${{ secrets.OPENAI_API_KEY }}"
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        GITHUB_REPOSITORY: "${{ github.repository }}"
+        PR_NUMBER: "${{ github.event.pull_request.number }}"
       run: |
         chmod +x run.sh
         ./run.sh
+
