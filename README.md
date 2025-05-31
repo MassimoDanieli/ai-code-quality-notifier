@@ -1,68 +1,75 @@
 
-# 🧠 AI Code Quality Notifier – Minimal PoC
+# 🤖 AI Code Quality Notifier
 
-Questo è un prototipo che analizza i risultati di SonarQube per identificare *code smells critici o blocker* in file modificati di recente, e invia una notifica via **email Gmail SMTP** se la soglia viene superata.
+[![AI Quality Notifier](https://github.com/MassimoDanieli/ai-code-quality-notifier/actions/workflows/quality-check.yml/badge.svg)](https://github.com/MassimoDanieli/ai-code-quality-notifier/actions)
 
-## 📦 Contenuto del progetto
+Questo è un **prototipo intelligente** per migliorare la qualità del codice nelle pipeline CI/CD.  
+Analizza i report di **SonarQube**, individua *code smells critici o blocker* in file modificati di recente, e invia una **notifica via email (SMTP Gmail)** se necessario.
 
-- `analyze.py` – Analizza un report JSON di SonarQube e invia un'email se serve
-- `get_recently_modified_files.py` – Trova i file modificati negli ultimi 7 giorni con `git log`
-- `sonar_report.json` – Esempio di report SonarQube
-- `run.sh` – Script per eseguire tutto in un colpo solo
+---
 
-## 🚀 Come si usa
+## 🚀 Come funziona
 
-### 1. Clona o scarica il progetto
+1. Legge il file `sonar_report.json`
+2. Filtra solo problemi `BLOCKER` e `CRITICAL`
+3. Controlla se i file coinvolti sono stati modificati negli ultimi 7 giorni
+4. Se la soglia è superata, **manda una mail con dettagli**
+5. Funziona anche in **GitHub Actions** con `SMTP_PASSWORD` salvata come secret
 
-```bash
-git clone ...
-cd ...
+---
+
+## 📦 Struttura del progetto
+
+```
+.
+├── run.sh                      # Script per eseguire tutto
+├── sonar_report.json          # Report SonarQube di esempio
+├── src/
+│   ├── analyze.py             # Analisi e invio email
+│   └── get_recently_modified_files.py  # Estrae file toccati da git
+├── .github/workflows/
+│   └── quality-check.yml      # GitHub Actions CI
 ```
 
-### 2. Esporta la tua Gmail App Password
+---
+
+## ⚙️ Setup rapido
 
 ```bash
-export SMTP_PASSWORD="la-tua-app-password-gmail"
-```
-
-> ⚠️ Devi prima generare una App Password da https://myaccount.google.com/apppasswords
-
-### 3. Assicurati di essere in una repo Git con commit recenti
-
-```bash
-git status
-```
-
-### 4. Lancia il sistema
-
-```bash
+export SMTP_PASSWORD="la-tua-app-password"
 bash run.sh
 ```
 
-## ✅ Requisiti
+## 🔐 GitHub Actions Secrets
 
-- Python 3.10+
-- Una repo Git
-- Report `sonar_report.json`
-- Gmail App Password
+Aggiungi il secret `SMTP_PASSWORD` su  
+`https://github.com/MassimoDanieli/ai-code-quality-notifier/settings/secrets/actions`
 
-## 📧 Email di esempio
+---
+
+## 📧 Esempio Email
 
 ```
 🚨 AI Quality Gate Triggered
 
 Detected 2 critical code smells in files modified in the last 7 days:
 
-• src/db/dao.py — "Refactor this function to reduce its Cognitive Complexity..."
-• src/utils/legacy_parser.py — "Replace this usage of System.out or System.err..."
+• src/db/dao.py — "Cognitive complexity too high"
+• src/utils/legacy_parser.py — "Use logger instead of print"
 
-Recommended action: consider refactoring or improving coverage.
+Recommended action: refactor before merge.
 ```
 
 ---
 
-## 📌 Roadmap futura
+## 📌 Prossimi step
 
-- Estensione a Slack, GitHub Comment, Jira
-- Parsing automatico da API SonarQube
-- Refactoring assistito via LLM (CodeLlama, GPT-4)
+- Integrazione con Slack, GitHub PR comments, Jira
+- Refactoring automatico via LLM
+- Dashboard di osservabilità
+
+---
+
+## 🧠 Licenza
+
+MIT — Made with ❤️ by [Massimo Danieli](https://github.com/MassimoDanieli)
