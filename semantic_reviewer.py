@@ -1,10 +1,9 @@
-
 import os
-import openai
 import glob
+import openai
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-if not openai.api_key:
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+if not client.api_key:
     raise RuntimeError("Missing OPENAI_API_KEY environment variable.")
 
 PROMPT_TEMPLATE = """
@@ -24,7 +23,7 @@ Code:
 
 def analyze_code(code: str) -> str:
     prompt = PROMPT_TEMPLATE.format(code=code)
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.4
@@ -47,3 +46,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
